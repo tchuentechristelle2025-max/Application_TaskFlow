@@ -34,22 +34,22 @@ pip install django djangorestframework django-cors-headers mysqlclient
 ### 2. Configurer MySQL
 Créer une base `taskflow_db` dans MySQL :
 ```sql
-CREATE DATABASE taskflow_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATEDATABASES taskflow_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Modifier `backend/taskflow_project/settings.py` ligne 85 avec tes identifiants MySQL.
+
 
 ### 3. Lancer les migrations
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py runserver 8000
+python manage.py runserver 
 ```
-API dispo sur http://localhost:8000/api/tasks/
+
 
 ### 4. Frontend
-Ouvre simplement `frontend/index.html` avec Live Server dans VSCode. 
+Ouvrir simplement `frontend/index.html` avec Live Server dans VSCode. 
 L'app se connecte auto à l'API. Si le backend est offline, elle utilise LocalStorage.
 
 ## Déploiement
