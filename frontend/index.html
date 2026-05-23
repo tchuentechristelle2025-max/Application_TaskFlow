@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Gestionnaire de tâches</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <!-- Navbar -->
+    <nav class="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-list-check text-3xl text-primary"></i>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">TaskFlow</h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="apiStatus" class="hidden sm:flex items-center gap-2 text-sm">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-gray-600 dark:text-gray-400">API Connectée</span>
+                    </div>
+                    <button id="themeToggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Total</p>
+                        <p id="totalTasks" class="text-3xl font-bold mt-1">0</p>
+                    </div>
+                    <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+                        <i class="fa-solid fa-list text-blue-600 dark:text-blue-400 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Terminées</p>
+                        <p id="completedTasks" class="text-3xl font-bold mt-1">0</p>
+                    </div>
+                    <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+                        <i class="fa-solid fa-check text-green-600 dark:text-green-400 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">En cours</p>
+                        <p id="pendingTasks" class="text-3xl font-bold mt-1">0</p>
+                    </div>
+                    <div class="bg-orange-100 dark:bg-orange-900 p-3 rounded-lg">
+                        <i class="fa-solid fa-clock text-orange-600 dark:text-orange-400 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Task Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-plus-circle text-primary"></i>
+                Ajouter une tâche
+            </h2>
+            <form id="taskForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Titre *</label>
+                        <input type="text" id="taskTitle" required
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition"
+                            placeholder="Ex: Réviser JavaScript">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Catégorie</label>
+                        <select id="taskCategory" 
+                            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition">
+                            <option value="">Sans catégorie</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Description</label>
+                    <textarea id="taskDescription" rows="3"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 focus:ring-2 focus:ring-primary outline-none transition"
+                        placeholder="Détails de la tâche..."></textarea>
+                </div>
+                <button type="submit" 
+                    class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-semibold rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200">
+                    <i class="fa-solid fa-plus mr-2"></i>Ajouter la tâche
+                </button>
+            </form>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-2 mb-6">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fa-solid fa-border-all mr-1"></i>Toutes
+            </button>
+            <button class="filter-btn" data-filter="pending">
+                <i class="fa-solid fa-clock mr-1"></i>En cours
+            </button>
+            <button class="filter-btn" data-filter="completed">
+                <i class="fa-solid fa-check mr-1"></i>Terminées
+            </button>
+            <div class="flex-1"></div>
+            <button id="clearCompleted" class="px-4 py-2 text-sm bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition">
+                <i class="fa-solid fa-trash mr-1"></i>Supprimer terminées
+            </button>
+        </div>
+
+        <!-- Tasks List -->
+        <div id="tasksList" class="space-y-3"></div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <i class="fa-solid fa-clipboard-list text-6xl text-gray-300 dark:text-gray-700 mb-4"></i>
+            <p class="text-gray-500 dark:text-gray-400 text-lg">Aucune tâche pour le moment</p>
+            <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">Commence par ajouter ta première tâche !</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-16 py-6 border-t border-gray-200 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 text-sm">
+        <p>TaskFlow © 2026 - VTIL Examen Semestriel 1 | Fait avec <i class="fa-solid fa-heart text-red-500"></i></p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
