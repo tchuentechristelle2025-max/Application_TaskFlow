@@ -1,7 +1,7 @@
 # Application TaskFlow -Examen de fin de formation
 
 
-## Structure de mon projet TaskFlow
+## Structure de mon projet TaskFlo
 
 Taskflow/
 ├── backend/                 
